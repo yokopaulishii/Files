@@ -1,0 +1,47 @@
+__winc_id__ = "ae539110d03e49ea8738fd413ac44ba8"
+__human_name__ = "files"
+
+import os
+import sys
+from re import M
+from zipfile import ZipFile
+import os.path
+from pathlib import Path
+import shutil
+
+def clean_cache():
+    if os.path.exists('./files/cache'):
+        shutil.rmtree('./files/cache')
+    os.mkdir('./files/cache')
+
+def cache_zip(zip_file_path, cache_dir_path):
+    with ZipFile(zip_file_path, 'r') as zip:
+        zip.extractall(cache_dir_path)
+my_zip_file = './files/data.zip'
+my_cache_dir = './files/cache/'
+cache_zip(zip_file_path= my_zip_file, cache_dir_path = my_cache_dir)
+print(os.getcwd())
+
+def cached_files():
+    all_cache_files = []
+    my_cache_dir = os.path.abspath("files/cache")
+    for file in os.listdir(my_cache_dir):
+        filepath = os.path.join(my_cache_dir, file)
+        all_cache_files.append(filepath)
+    return all_cache_files
+
+def find_password(all_cache_files):
+    for file in all_cache_files:
+        with open(file, 'r') as f:
+            lines = f.readlines()
+            for line in lines:
+                if 'password' in line:
+                    passwordline = line
+                    break
+    return passwordline[10:-1]
+
+clean_cache()
+cache_zip('./files/data.zip', './files/cache')
+files = cached_files()
+#print(files)
+print(find_password(files))
